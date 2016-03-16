@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title>Canvas Fireworks</title>
+
+	<!-- meta -->
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width">
+
+	<!-- main style -->
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="fireworks-canvas" class="canvas-wrapper"></div>
+<script src="build/index.min.js"></script>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		new FireworksCanvas({
+			id: '#fireworks-canvas',
+			velocity: -2
+		});
+	});
+</script>
+</body>
+</html>
