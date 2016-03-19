@@ -3,54 +3,73 @@ var START_POSITION = {
 	y: 600
 };
 
+var DIMENTIONS = {
+	width: 3,
+	height: 3
+};
+
 function FireworksCanvas(options) {
 	this.canvas = document.querySelector(options.id);
 	this.context = this.canvas.getContext('2d');
 
 	this.options = options;
 
-	this.context.fillStyle = 'rgb(0,0,0)';
-	this.context.fillRect(START_POSITION.x, START_POSITION.y, 3, 3);
-
-	this.animate();
+	this.init();
 }
 
 FireworksCanvas.prototype = {
-	animate: function() {
-		new Particle({
-			context: this.context,
-			velocity: this.options.velocity,
-			canvas: this.canvas
-		});
+	init: function() {
+		var particle = new Particle();
+
+		this.animate(particle);
+	},
+
+	animate: function(particle) {
+		var position = particle.getPosition();
+		var newPositionY = position.y - this.options.velocity;
+
+		// Clear canvas
+		this.clearPrevious(position.x, position.y);
+
+		// Set new position
+		particle.setPosition(START_POSITION.x, newPositionY);
+
+		// Draw new dot
+		this.drawNext(START_POSITION.x, newPositionY);
+
+		if (newPositionY > 0) {
+			window.requestAnimationFrame(this.animate.bind(this, particle));
+		}
+	},
+
+	drawNext: function(x, y) {
+		this.context.fillStyle = 'rgb(0,0,0)';
+		this.context.fillRect(x, y, DIMENTIONS.width, DIMENTIONS.height);
+	},
+
+	clearPrevious: function(x, y) {
+		this.context.clearRect(x, y, DIMENTIONS.width + 1, DIMENTIONS.height + 1);
 	}
 };
 
 // Particle
 // ===========================
-function Particle(options) {
-	this.y = START_POSITION.y;
-	this.context = options.context;
-	this.velocity  = options.velocity;
-	this.canvas = options.canvas;
-
-	this.startAnimation();
+function Particle() {
+	this.position = {
+		x: START_POSITION.x,
+		y: START_POSITION.y
+	};
 }
 
 Particle.prototype = {
-	startAnimation: function() {
-		window.requestAnimationFrame(this.frame.bind(this));
+	getPosition: function() {
+		return this.position;
 	},
 
-	frame: function() {
-		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-		this.y = this.y - this.velocity;
-
-		this.context.fillStyle = 'rgb(0,0,0)';
-		this.context.fillRect(START_POSITION.x, this.y, 3, 3);
-
-		if (this.y > 0) {
-			window.requestAnimationFrame(this.frame.bind(this));
-		}
+	setPosition: function(x, y) {
+		this.position = {
+			x: x,
+			y: y
+		};
 	}
 };

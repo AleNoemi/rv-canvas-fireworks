@@ -23,10 +23,12 @@
 <script src="build/index.min.js"></script>
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
-		new FireworksCanvas({
+		var fireworks = new FireworksCanvas({
 			id: '#fireworks-canvas',
 			velocity: 2
 		});
+
+		fireworks.init();
 	});
 </script>
 </body>
