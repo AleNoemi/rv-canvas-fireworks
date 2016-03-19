@@ -21,7 +21,8 @@ function FireworksCanvas(options) {
 
 FireworksCanvas.prototype = {
 	init: function() {
-		this.counter = 0;
+		this.limitCounter = 0;
+
 		window.requestAnimationFrame(this.addParticple.bind(this));
 	},
 
@@ -40,20 +41,21 @@ FireworksCanvas.prototype = {
 					}
 				});
 
-			var velocity = particle.getVelocity();
-			window.requestAnimationFrame(this.animate.bind(this, particle, velocity));
+			window.requestAnimationFrame(this.animate.bind(this, particle));
 
+			// Set new velocityX
 			velocityX = velocityX - 0.25;
 		}
 
-		if (this.counter < 300) {
-			this.counter = this.counter + 1;
+		if (this.limitCounter < 300) {
+			this.limitCounter = this.limitCounter + 1;
 			window.requestAnimationFrame(this.addParticple.bind(this));
 		}
 	},
 
-	animate: function(particle, velocity) {
+	animate: function(particle) {
 		var position = particle.getPosition();
+		var velocity = particle.getVelocity();
 
 		var newPositionX = position.x - velocity.x;
 		var newPositionY = position.y - velocity.y;
