@@ -10,7 +10,9 @@ var DIMENTIONS = {
 
 function FireworksCanvas(options) {
 	this.canvas = document.querySelector(options.id);
+
 	this.context = this.canvas.getContext('2d');
+	this.context.fillStyle = 'rgb(0,0,0)';
 
 	this.options = options;
 
@@ -19,45 +21,77 @@ function FireworksCanvas(options) {
 
 FireworksCanvas.prototype = {
 	init: function() {
-		var particle = new Particle();
-
-		this.animate(particle);
+		this.counter = 0;
+		window.requestAnimationFrame(this.addParticple.bind(this));
 	},
 
-	animate: function(particle) {
+	addParticple: function() {
+		var velocityX = 3;
+
+		while(velocityX >= -3) {
+			var particle = new Particle({
+					position: {
+						x: START_POSITION.x,
+						y: START_POSITION.y
+					},
+					velocity: {
+						x: velocityX,
+						y: 6
+					}
+				});
+
+			var velocity = particle.getVelocity();
+			window.requestAnimationFrame(this.animate.bind(this, particle, velocity));
+
+			velocityX = velocityX - 0.25;
+		}
+
+		if (this.counter < 300) {
+			this.counter = this.counter + 1;
+			window.requestAnimationFrame(this.addParticple.bind(this));
+		}
+	},
+
+	animate: function(particle, velocity) {
 		var position = particle.getPosition();
-		var newPositionY = position.y - this.options.velocity;
+
+		var newPositionX = position.x - velocity.x;
+		var newPositionY = position.y - velocity.y;
 
 		// Clear canvas
 		this.clearPrevious(position.x, position.y);
 
 		// Set new position
-		particle.setPosition(START_POSITION.x, newPositionY);
+		particle.setPosition(newPositionX, newPositionY);
 
 		// Draw new dot
-		this.drawNext(START_POSITION.x, newPositionY);
+		this.drawNext(newPositionX, newPositionY);
 
-		if (newPositionY > 0) {
-			window.requestAnimationFrame(this.animate.bind(this, particle));
+		if (newPositionY > -3) {
+			window.requestAnimationFrame(this.animate.bind(this, particle, velocity));
 		}
 	},
 
 	drawNext: function(x, y) {
-		this.context.fillStyle = 'rgb(0,0,0)';
 		this.context.fillRect(x, y, DIMENTIONS.width, DIMENTIONS.height);
 	},
 
 	clearPrevious: function(x, y) {
-		this.context.clearRect(x, y, DIMENTIONS.width + 1, DIMENTIONS.height + 1);
+		this.context.clearRect(x - 1, y - 1, DIMENTIONS.width + 2, DIMENTIONS.height + 2);
 	}
 };
 
 // Particle
 // ===========================
-function Particle() {
+function Particle(options) {
 	this.position = {
-		x: START_POSITION.x,
-		y: START_POSITION.y
+		x: options.position ? options.position.x : START_POSITION.x,
+		y: options.position ? options.position.y : START_POSITION.y
+	};
+
+	this.velocity = {
+		x: options.velocity ? options.velocity.x : 0,
+		y: options.velocity ? options.velocity.y : 2
 	};
 }
 
@@ -71,5 +105,9 @@ Particle.prototype = {
 			x: x,
 			y: y
 		};
+	},
+
+	getVelocity: function() {
+		return this.velocity;
 	}
 };
