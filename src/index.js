@@ -117,7 +117,7 @@ FireworksCanvas.prototype = {
 		// Draw new particle position
 		this.drawNext(newPosition.x, newPosition.y);
 
-		if (newPosition.y > -3) {
+		if (newPosition.y < START_POSITION.y) {
 			this.requestFrame(this.animate.bind(this, particle));
 		}
 	},
