@@ -8,6 +8,12 @@ var DIMENTIONS = {
 	height: 3
 };
 
+var PARTICLE_PATH_MIN = 3;
+var PARTICLE_PATH_MAX = -3;
+var PARTICLE_PATH_DISTANCE = 0.25;
+
+// FireworksCanvas
+// =========================
 function FireworksCanvas(options) {
 	this.canvas = document.querySelector(options.id);
 
@@ -15,21 +21,24 @@ function FireworksCanvas(options) {
 	this.context.fillStyle = 'rgb(0,0,0)';
 
 	this.options = options;
-
-	this.init();
 }
 
 FireworksCanvas.prototype = {
 	init: function() {
-		this.limitCounter = 0;
+		this.particlePathLimit = 300;
+		this.gravity = 0.5;
 
-		window.requestAnimationFrame(this.addParticple.bind(this));
+		this.addParticple();
+	},
+
+	requestFrame: function(callback) {
+		window.requestAnimationFrame(callback);
 	},
 
 	addParticple: function() {
-		var velocityX = 3;
+		var velocityX = PARTICLE_PATH_MIN;
 
-		while(velocityX >= -3) {
+		while (velocityX >= PARTICLE_PATH_MAX) {
 			var particle = new Particle({
 					position: {
 						x: START_POSITION.x,
@@ -41,36 +50,57 @@ FireworksCanvas.prototype = {
 					}
 				});
 
-			window.requestAnimationFrame(this.animate.bind(this, particle));
+			// Animate particle
+			this.requestFrame(this.animate.bind(this, particle));
 
 			// Set new velocityX
-			velocityX = velocityX - 0.25;
+			velocityX = velocityX - PARTICLE_PATH_DISTANCE;
 		}
 
-		if (this.limitCounter < 300) {
-			this.limitCounter = this.limitCounter + 1;
-			window.requestAnimationFrame(this.addParticple.bind(this));
+		if (this.particlePathLimit > 0) {
+			this.particlePathLimit = this.particlePathLimit - 1;
+			this.requestFrame(this.addParticple.bind(this));
 		}
+	},
+
+	getNewVelocity: function(velocity) {
+		// TODO: add gravity
+		return {
+			x: velocity.x,
+			y: velocity.y
+		};
+	},
+
+	getNewPosition: function(position, velocity) {
+		return {
+			x: position.x + velocity.x,
+			y: position.y - velocity.y
+		};
 	},
 
 	animate: function(particle) {
 		var position = particle.getPosition();
 		var velocity = particle.getVelocity();
+		var newPosition;
 
-		var newPositionX = position.x - velocity.x;
-		var newPositionY = position.y - velocity.y;
+		// Get new velocity and save them
+		velocity = this.getNewVelocity(velocity);
+		particle.setVelocity(velocity.x, velocity.y);
+
+		// Get new position
+		newPosition = this.getNewPosition(position, velocity);
 
 		// Clear canvas
 		this.clearPrevious(position.x, position.y);
 
 		// Set new position
-		particle.setPosition(newPositionX, newPositionY);
+		particle.setPosition(newPosition.x, newPosition.y);
 
-		// Draw new dot
-		this.drawNext(newPositionX, newPositionY);
+		// Draw new particle position
+		this.drawNext(newPosition.x, newPosition.y);
 
-		if (newPositionY > -3) {
-			window.requestAnimationFrame(this.animate.bind(this, particle, velocity));
+		if (newPosition.y > -3) {
+			this.requestFrame(this.animate.bind(this, particle));
 		}
 	},
 
@@ -111,5 +141,12 @@ Particle.prototype = {
 
 	getVelocity: function() {
 		return this.velocity;
+	},
+
+	setVelocity: function(x, y) {
+		this.velocity = {
+			x: x,
+			y: y
+		};
 	}
 };
