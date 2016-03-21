@@ -32,7 +32,7 @@ FireworksCanvas.prototype = {
 
 		this.gravity = 0.05;
 
-		this.addParticple();
+		this.addParticles();
 	},
 
 	requestFrame: function(callback) {
@@ -49,7 +49,7 @@ FireworksCanvas.prototype = {
 		].join('');
 	},
 
-	addParticple: function() {
+	addParticles: function() {
 		var velocityX = PARTICLE_PATH_MIN;
 
 		while (velocityX >= PARTICLE_PATH_MAX) {
@@ -73,7 +73,7 @@ FireworksCanvas.prototype = {
 
 		if (this.particlePathLimit > 0) {
 			this.particlePathLimit = this.particlePathLimit - 1;
-			this.requestFrame(this.addParticple.bind(this));
+			this.requestFrame(this.addParticles.bind(this));
 		}
 	},
 
