@@ -8,12 +8,10 @@ var DIMENTIONS = {
 	height: 3
 };
 
-var PARTICLE_PATH_MIN = 1.6;
-var PARTICLE_PATH_MAX = -1.6;
+var PARTICLE_PATH_MIN_X = 1.6;
+var PARTICLE_PATH_MAX_X = -1.6;
 var PARTICLE_PATH_DISTANCE = 0.1;
-var PARTICLE_LIMIT = 70;
 
-var CLEAR_OPACITY = 0;
 
 // FireworksCanvas
 // =========================
@@ -22,13 +20,11 @@ function FireworksCanvas(options) {
 
 	this.context = this.canvas.getContext('2d');
 	this.context.fillStyle = 'rgb(0,0,0)';
-
-	this.options = options;
 }
 
 FireworksCanvas.prototype = {
 	init: function() {
-		this.particlePathLimit = PARTICLE_LIMIT;
+		this.throwParticlesLimit = 70;
 
 		this.gravity = 0.05;
 
@@ -50,9 +46,9 @@ FireworksCanvas.prototype = {
 	},
 
 	addParticles: function() {
-		var velocityX = PARTICLE_PATH_MIN;
+		var velocityX = PARTICLE_PATH_MIN_X;
 
-		while (velocityX >= PARTICLE_PATH_MAX) {
+		while (velocityX >= PARTICLE_PATH_MAX_X) {
 			var particle = new Particle({
 					position: {
 						x: START_POSITION.x,
@@ -71,8 +67,8 @@ FireworksCanvas.prototype = {
 			velocityX = velocityX - PARTICLE_PATH_DISTANCE;
 		}
 
-		if (this.particlePathLimit > 0) {
-			this.particlePathLimit = this.particlePathLimit - 1;
+		if (this.throwParticlesLimit > 0) {
+			this.throwParticlesLimit = this.throwParticlesLimit - 1;
 			this.requestFrame(this.addParticles.bind(this));
 		}
 	},
@@ -112,7 +108,7 @@ FireworksCanvas.prototype = {
 		particle.setPosition(newPosition.x, newPosition.y);
 
 		// New random color
-		this.setNewColor();
+		// this.setNewColor();
 
 		// Draw new particle position
 		this.drawNext(newPosition.x, newPosition.y);
