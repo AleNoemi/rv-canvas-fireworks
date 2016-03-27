@@ -22,12 +22,6 @@ function FireworksCanvas(options) {
 
 FireworksCanvas.prototype = {
 	init: function() {
-		this.particles = [];
-
-		this.start();
-	},
-
-	start: function() {
 		this.addParticles();
 	},
 
@@ -74,10 +68,9 @@ FireworksCanvas.prototype = {
 			p.y = p.y - p.vY;
 			p.x = p.x - p.vX;
 
-			// Draw on canvas
-			self.drawParticle(p.x, p.y);
-
+			// Check if position is still on viewport
 			if (p.y < START_POSITION.y + DIMENTIONS.height) {
+				self.drawParticle(p.x, p.y);
 				particles.push(p);
 			}
 
@@ -88,7 +81,6 @@ FireworksCanvas.prototype = {
 			self.addParticles();
 		});
 	},
-
 
 	setRandomColor: function() {
 		this.context.fillStyle = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
