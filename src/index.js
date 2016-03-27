@@ -8,159 +8,102 @@ var DIMENTIONS = {
 	height: 3
 };
 
-var PARTICLE_PATH_MIN_X = 1.6;
-var PARTICLE_PATH_MAX_X = -1.6;
-var PARTICLE_PATH_DISTANCE = 0.1;
-
-
 // FireworksCanvas
 // =========================
 function FireworksCanvas(options) {
 	this.canvas = document.querySelector(options.id);
 
+	this.gravity = 0.15;
+	this.particles = [];
+
 	this.context = this.canvas.getContext('2d');
-	this.context.fillStyle = 'rgb(0,0,0)';
+	this.context.fillStyle = '#fff';
 }
 
 FireworksCanvas.prototype = {
 	init: function() {
-		this.throwParticlesLimit = 70;
+		this.particles = [];
 
-		this.gravity = 0.05;
+		this.start();
+	},
 
+	start: function() {
 		this.addParticles();
 	},
 
-	requestFrame: function(callback) {
-		window.requestAnimationFrame(callback);
-	},
-
-	setNewColor: function() {
-		this.context.fillStyle = [
-			'rgb(',
-				(Math.floor(Math.random() * 256)), ',',
-				(Math.floor(Math.random() * 256)), ',',
-				(Math.floor(Math.random() * 256)),
-			')'
-		].join('');
-	},
-
 	addParticles: function() {
-		var velocityX = PARTICLE_PATH_MIN_X;
+		var max = 50;
 
-		while (velocityX >= PARTICLE_PATH_MAX_X) {
-			var particle = new Particle({
-					position: {
-						x: START_POSITION.x,
-						y: START_POSITION.y
-					},
-					velocity: {
-						x: velocityX,
-						y: 6
-					}
-				});
-
-			// Animate particle
-			this.requestFrame(this.animate.bind(this, particle));
-
-			// Set new velocityX
-			velocityX = velocityX - PARTICLE_PATH_DISTANCE;
+		while (max > 0) {
+			this.particles.push(this.getParticle());
+			max--;
 		}
 
-		if (this.throwParticlesLimit > 0) {
-			this.throwParticlesLimit = this.throwParticlesLimit - 1;
-			this.requestFrame(this.addParticles.bind(this));
-		}
+		this.render();
 	},
 
-	getNewVelocity: function(velocity) {
-		velocity.y = velocity.y - this.gravity;
+	getRandomArbitrary: function(min, max) {
+		return (Math.random() * (max - min) + min).toFixed(1);
+	},
 
+	getRandomIntInclusive: function(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	},
+
+	getParticle: function() {
 		return {
-			x: velocity.x,
-			y: velocity.y
+			x: START_POSITION.x,
+			y: START_POSITION.y,
+			vX: this.getRandomArbitrary(-1.7, 1.7),
+			vY: this.getRandomIntInclusive(6, 12)
 		};
 	},
 
-	getNewPosition: function(position, velocity) {
-		return {
-			x: position.x + velocity.x,
-			y: position.y - velocity.y
-		};
+	render: function() {
+		var self = this;
+
+		// Clear previous state
+		this.clearPrevious();
+
+		// Loop through all particles
+		this.particles = this.particles.reduce(function(particles, p) {
+			// Aplly gravity
+			p.vY = p.vY - self.gravity;
+
+			// Update positions
+			p.y = p.y - p.vY;
+			p.x = p.x - p.vX;
+
+			// Draw on canvas
+			self.drawParticle(p.x, p.y);
+
+			if (p.y < START_POSITION.y + DIMENTIONS.height) {
+				particles.push(p);
+			}
+
+			return particles;
+		}, []);
+
+		window.requestAnimationFrame(function() {
+			self.addParticles();
+		});
 	},
 
-	animate: function(particle) {
-		var position = particle.getPosition();
-		var velocity = particle.getVelocity();
-		var newPosition;
 
-		// Get new velocity and save them
-		velocity = this.getNewVelocity(velocity);
-		particle.setVelocity(velocity.x, velocity.y);
-
-		// Get new position
-		newPosition = this.getNewPosition(position, velocity);
-
-		// Clear canvas
-		this.clearPrevious(position.x, position.y);
-
-		// Set new position
-		particle.setPosition(newPosition.x, newPosition.y);
-
-		// New random color
-		// this.setNewColor();
-
-		// Draw new particle position
-		this.drawNext(newPosition.x, newPosition.y);
-
-		if (newPosition.y < START_POSITION.y) {
-			this.requestFrame(this.animate.bind(this, particle));
-		}
+	setRandomColor: function() {
+		this.context.fillStyle = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
 	},
 
-	drawNext: function(x, y) {
+	drawParticle: function(x, y) {
+		x = x.toFixed(1);
+		y = parseInt(y, 10);
+
+		this.setRandomColor();
+
 		this.context.fillRect(x, y, DIMENTIONS.width, DIMENTIONS.height);
 	},
 
-	clearPrevious: function(x, y) {
-		this.context.clearRect(x - 1, y - 1, DIMENTIONS.width + 2, DIMENTIONS.height + 2);
-	}
-};
-
-// Particle
-// ===========================
-function Particle(options) {
-	this.position = {
-		x: options.position ? options.position.x : START_POSITION.x,
-		y: options.position ? options.position.y : START_POSITION.y
-	};
-
-	this.velocity = {
-		x: options.velocity ? options.velocity.x : 0,
-		y: options.velocity ? options.velocity.y : 2
-	};
-}
-
-Particle.prototype = {
-	getPosition: function() {
-		return this.position;
-	},
-
-	setPosition: function(x, y) {
-		this.position = {
-			x: x,
-			y: y
-		};
-	},
-
-	getVelocity: function() {
-		return this.velocity;
-	},
-
-	setVelocity: function(x, y) {
-		this.velocity = {
-			x: x,
-			y: y
-		};
+	clearPrevious: function() {
+		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 };
