@@ -5,7 +5,29 @@ body{
 }
 
 .canvas-wrapper{
-	width: 800px;
-	margin: 50px auto;
+	width: 1000px;
+	margin: 20px auto;
 	background: #fff;
+}
+
+.canvas-sidebar{
+	width: 200px;
+	float: right;
+	height: 600px;
+}
+
+.canvas-parameter-value{
+	width: 40px;
+	float: right;
+}
+
+.canvas-parameter-name{
+	font-weight: 500;
+	display: block;
+	margin-bottom: .3em;
+}
+
+.canvas-parameter-range{
+	display: block;
+	margin: 8px 0 10px 0;
 }

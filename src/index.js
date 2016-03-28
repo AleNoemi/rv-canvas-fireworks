@@ -10,7 +10,7 @@ var DIMENTIONS = {
 
 // FireworksCanvas
 // =========================
-function FireworksCanvas() {
+function FireworksCanvas(selector) {
 	this.defaults = {
 		gravity: 0.13,
 		newParticlesMin: 2,
@@ -20,16 +20,16 @@ function FireworksCanvas() {
 		velocityYmin: 7,
 		velocityYmax: 9
 	};
+
+	this.canvas = document.querySelector(selector);
+
+	this.context = this.canvas.getContext('2d');
+	this.context.fillStyle = '#fff';
 }
 
 FireworksCanvas.prototype = {
 	init: function(options) {
 		this.options = extend(this.defaults, options);
-
-		this.canvas = document.querySelector(this.options.id);
-
-		this.context = this.canvas.getContext('2d');
-		this.context.fillStyle = '#fff';
 
 		this.stopped = 0;
 		this.particles = [];
@@ -37,8 +37,9 @@ FireworksCanvas.prototype = {
 		this.addParticles();
 	},
 
-	stop: function() {
+	destroy: function() {
 		this.stopped = 1;
+
 		this.clearPrevious();
 	},
 
@@ -123,8 +124,8 @@ FireworksCanvas.prototype = {
 	setRandomColor: function(x, y, direction) {
 		var alpha = 1;
 
+		// +0.15 to slow down the fadeOut effect
 		if (direction === 'down') {
-			// +0.15 to slow down the fadeOut effect
 			alpha = (alpha - (y / START_POSITION.y)) + 0.15;
 		}
 
@@ -155,5 +156,6 @@ function extend(a, b) {
 			a[key] = b[key];
 		}
 	}
+
 	return a;
 }
