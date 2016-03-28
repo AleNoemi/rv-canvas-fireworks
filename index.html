@@ -1,1 +1,106 @@
-My Page
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title>Canvas Fireworks</title>
+
+	<!-- meta -->
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width">
+
+	<!-- main style -->
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!--
+var defaults = {
+		gravity: 0.13,
+		newParticlesMin: 2,
+		newParticlesMax: 4,
+		velocityXmin: -2.5,
+		velocityXmax: 2.5,
+		velocityYmin: 7,
+		velocityYmax: 9
+};
+-->
+
+<div class="canvas-wrapper">
+	<div class="canvas-sidebar">
+		<ul class="canvas-parameters">
+			<li class="js-canvas-parameter">
+				<span class="canvas-parameter-name">Gravity:</span>
+				<input type="text" class="canvas-parameter-value js-input-text" value="0.13">
+				<input type="range" min="0.1" max="0.5" step="0.01" value="0.13" name="gravity" class="canvas-parameter-range js-input-range" />
+			</li>
+			<li class="js-canvas-parameter">
+				<span class="canvas-parameter-name">Particles min:</span>
+				<input type="text" class="canvas-parameter-value js-input-text" value="2">
+				<input type="range" min="0" max="3" step="1" value="2" name="newParticlesMin" class="canvas-parameter-range js-input-range" />
+			</li>
+			<li class="js-canvas-parameter">
+				<span class="canvas-parameter-name">Particles max:</span>
+				<input type="text" class="canvas-parameter-value js-input-text" value="4">
+				<input type="range" min="4" max="10" step="1" value="4" name="newParticlesMax" class="canvas-parameter-range js-input-range" />
+			</li>
+			<li class="js-canvas-parameter">
+				<span class="canvas-parameter-name">(X) Velocity min:</span>
+				<input type="text" class="canvas-parameter-value js-input-text" value="-2.5">
+				<input type="range" min="-5" max="-1" step="0.5" value="-2.5" name="velocityXmin" class="canvas-parameter-range js-input-range" />
+			</li>
+			<li class="js-canvas-parameter">
+				<span class="canvas-parameter-name">(X) Velocity max:</span>
+				<input type="text" class="canvas-parameter-value js-input-text" value="2.5">
+				<input type="range" min="1" max="5" step="0.5" value="2.5" name="velocityXmax" class="canvas-parameter-range js-input-range" />
+			</li>
+			<li class="js-canvas-parameter">
+				<span class="canvas-parameter-name">(Y) Velocity min:</span>
+				<input type="text" class="canvas-parameter-value js-input-text" value="7">
+				<input type="range" min="1" max="8" step="1" value="7" name="velocityYmin" class="canvas-parameter-range js-input-range" />
+			</li>
+			<li class="js-canvas-parameter">
+				<span class="canvas-parameter-name">(Y) Velocity max:</span>
+				<input type="text" class="canvas-parameter-value js-input-text" value="9">
+				<input type="range" min="8" max="16" step="1" value="9" name="velocityYmax" class="canvas-parameter-range js-input-range" />
+			</li>
+		</ul>
+	</div>
+	<canvas id="fireworks-canvas" width="800" height="600"></canvas>
+</div>
+
+<script src="build/index.min.js"></script>
+<script>
+	var APP = {};
+	document.addEventListener('DOMContentLoaded', function() {
+
+		APP.fireworks = new FireworksCanvas('#fireworks-canvas');
+		APP.fireworks.init();
+
+		var options = {};
+		var updateFireworks = function(prop, value) {
+			options[prop] = value;
+
+			APP.fireworks.destroy();
+			APP.fireworks = new FireworksCanvas('#fireworks-canvas');
+			APP.fireworks.init(options);
+		};
+
+		// Init parameter listeners
+		var parameters = document.querySelectorAll('.js-canvas-parameter');
+		[].forEach.call(parameters, function(param) {
+			var range = param.querySelector('.js-input-range');
+			var text = param.querySelector('.js-input-text');
+
+			range.addEventListener('change', function(event) {
+				var value = parseFloat(event.currentTarget.value);
+				text.value = value;
+				updateFireworks(range.name, value);
+			});
+		});
+	});
+</script>
+</body>
+</html>
