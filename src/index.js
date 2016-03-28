@@ -10,23 +10,47 @@ var DIMENTIONS = {
 
 // FireworksCanvas
 // =========================
-function FireworksCanvas(options) {
-	this.canvas = document.querySelector(options.id);
-
-	this.gravity = 0.13;
-	this.particles = [];
-
-	this.context = this.canvas.getContext('2d');
-	this.context.fillStyle = '#fff';
+function FireworksCanvas() {
+	this.defaults = {
+		gravity: 0.13,
+		newParticlesMin: 2,
+		newParticlesMax: 4,
+		velocityXmin: -2.5,
+		velocityXmax: 2.5,
+		velocityYmin: 7,
+		velocityYmax: 9
+	};
 }
 
 FireworksCanvas.prototype = {
-	init: function() {
+	init: function(options) {
+		this.options = extend(this.defaults, options);
+
+		this.canvas = document.querySelector(this.options.id);
+
+		this.context = this.canvas.getContext('2d');
+		this.context.fillStyle = '#fff';
+
+		this.stopped = 0;
+		this.particles = [];
+
 		this.addParticles();
 	},
 
+	stop: function() {
+		this.stopped = 1;
+		this.clearPrevious();
+	},
+
 	addParticles: function() {
-		var amount = this.getRandomIntInclusive(2, 4);
+		if (this.stopped) {
+			return;
+		}
+
+		var amount = this.getRandomIntInclusive(
+				this.options.newParticlesMin,
+				this.options.newParticlesMax
+			);
 
 		this.particles = this.particles.concat(this.getParticles(amount));
 
@@ -41,8 +65,8 @@ FireworksCanvas.prototype = {
 			newParticles.push({
 				x: START_POSITION.x,
 				y: START_POSITION.y,
-				vX: this.getRandomArbitrary(-2.5, 2.5),
-				vY: this.getRandomIntInclusive(7, 9)
+				vX: this.getRandomArbitrary(this.options.velocityXmin, this.options.velocityXmax),
+				vY: this.getRandomIntInclusive(this.options.velocityYmin, this.options.velocityYmax)
 			});
 			max--;
 		}
@@ -60,14 +84,13 @@ FireworksCanvas.prototype = {
 		// Loop through all particles
 		this.particles = this.particles.filter(function(p) {
 			// Aplly gravity
-			p.vY = p.vY - self.gravity;
+			p.vY = p.vY - self.options.gravity;
+			// Define direction
+			direction = (p.vY < 0) ? 'down' : 'up';
 
 			// Update positions
 			p.y = p.y - p.vY;
 			p.x = p.x - p.vX;
-
-			// Define direction
-			direction = (p.vY < 0) ? 'down' : 'up';
 
 			// Check if position is still on viewport
 			if (p.y < START_POSITION.y + DIMENTIONS.height) {
@@ -97,15 +120,16 @@ FireworksCanvas.prototype = {
 		var alpha = 1;
 
 		if (direction === 'down') {
+			// +0.15 to slow down the fadeOut effect
 			alpha = (alpha - (y / START_POSITION.y)) + 0.15;
 		}
 
 		this.context.fillStyle = [
-			'rgba(' +
-				(Math.floor(Math.random() * 256)) + ',' +
-				(Math.floor(Math.random() * 256)) + ',' +
-				(Math.floor(Math.random() * 256)) + ',' +
-				alpha +
+			'rgba(',
+				(Math.floor(Math.random() * 256)), ',',
+				(Math.floor(Math.random() * 256)), ',',
+				(Math.floor(Math.random() * 256)), ',',
+				alpha,
 			')'
 		].join('');
 	},
@@ -118,3 +142,12 @@ FireworksCanvas.prototype = {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	},
 };
+
+function extend(a, b){
+	for (var key in b) {
+		if (b.hasOwnProperty(key)) {
+			a[key] = b[key];
+		}
+	}
+	return a;
+}

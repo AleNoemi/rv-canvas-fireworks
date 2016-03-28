@@ -22,12 +22,13 @@
 
 <script src="build/index.min.js"></script>
 <script>
+	var APP = {};
 	document.addEventListener('DOMContentLoaded', function() {
-		var fireworks = new FireworksCanvas({
+		APP.fireworks = new FireworksCanvas();
+
+		APP.fireworks.init({
 			id: '#fireworks-canvas'
 		});
-
-		fireworks.init();
 	});
 </script>
 </body>
