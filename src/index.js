@@ -47,7 +47,7 @@ FireworksCanvas.prototype = {
 			return;
 		}
 
-		var amount = this.getRandomIntInclusive(
+		var amount = getRandomIntInclusive(
 				this.options.newParticlesMin,
 				this.options.newParticlesMax
 			);
@@ -60,13 +60,17 @@ FireworksCanvas.prototype = {
 	getParticles: function(amount) {
 		var newParticles = [];
 		var max = amount;
+		var vxMin = this.options.velocityXmin;
+		var vxMax = this.options.velocityXmax;
+		var vyMin = this.options.velocityYmin;
+		var vyMax = this.options.velocityYmax;
 
 		while (max > 0) {
 			newParticles.push({
 				x: START_POSITION.x,
 				y: START_POSITION.y,
-				vX: this.getRandomArbitrary(this.options.velocityXmin, this.options.velocityXmax),
-				vY: this.getRandomIntInclusive(this.options.velocityYmin, this.options.velocityYmax)
+				vX: getRandomArbitrary(vxMin, vxMax),
+				vY: getRandomIntInclusive(vyMin, vyMax)
 			});
 			max--;
 		}
@@ -132,18 +136,20 @@ FireworksCanvas.prototype = {
 				alpha,
 			')'
 		].join('');
-	},
-
-	getRandomArbitrary: function(min, max) {
-		return (Math.random() * (max - min) + min).toFixed(1);
-	},
-
-	getRandomIntInclusive: function(min, max) {
-		return Math.floor(Math.random() * (max - min + 1)) + min;
-	},
+	}
 };
 
-function extend(a, b){
+// Helper functions
+// ======================
+function getRandomArbitrary(min, max) {
+	return (Math.random() * (max - min) + min).toFixed(1);
+}
+
+function getRandomIntInclusive(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function extend(a, b) {
 	for (var key in b) {
 		if (b.hasOwnProperty(key)) {
 			a[key] = b[key];
