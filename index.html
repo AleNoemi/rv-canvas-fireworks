@@ -52,7 +52,7 @@ var defaults = {
 				<input type="range" min="8" max="16" step="1" value="9" name="velocityYmax" class="canvas-parameter-range js-input-range" />
 			</li>
 			<li>
-				<button class="js-start-btn">Start</button>
+				<button class="js-start-btn" style="display: none;">Start</button>
 				<button class="js-stop-btn">Stop</button>
 			</li>
 		</ul>
@@ -96,11 +96,15 @@ var defaults = {
 		startBtn.addEventListener('click', function(event) {
 			event.preventDefault();
 			fireworks.start();
+			startBtn.style.display = 'none';
+			stopBtn.style.display = 'block';
 		});
 
 		stopBtn.addEventListener('click', function(event) {
 			event.preventDefault();
 			fireworks.stop();
+			stopBtn.style.display = 'none';
+			startBtn.style.display = 'block';
 		});
 	});
 </script>
