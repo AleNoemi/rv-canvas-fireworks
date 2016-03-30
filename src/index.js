@@ -13,11 +13,8 @@ var DIMENTIONS = {
 function FireworksCanvas(selector) {
 	this.defaults = {
 		gravity: 0.13,
-		newParticlesMin: 2,
 		newParticlesMax: 4,
-		velocityXmin: -2.5,
-		velocityXmax: 2.5,
-		velocityYmin: 7,
+		velocityX: 2.5,
 		velocityYmax: 9
 	};
 
@@ -31,52 +28,39 @@ FireworksCanvas.prototype = {
 	init: function(options) {
 		this.options = extend(this.defaults, options);
 
-		this.stopped = 0;
 		this.particles = [];
-
-		this.addParticles();
+		this.frame = this.frame.bind(this);
 	},
 
-	destroy: function() {
-		this.stopped = 1;
+	start: function() {
+		this.running = true;
+		this.frame();
+	},
 
-		this.clearPrevious();
+	stop: function() {
+		this.running = false;
 	},
 
 	addParticles: function() {
-		if (this.stopped) {
-			return;
+		var amount = getRandomIntInclusive(1, this.options.newParticlesMax);
+
+		while (amount > 0) {
+			this.particles.push(this.getParticles());
+			amount--;
 		}
-
-		var amount = getRandomIntInclusive(
-				this.options.newParticlesMin,
-				this.options.newParticlesMax
-			);
-
-		this.particles = this.particles.concat(this.getParticles(amount));
-
-		this.render();
 	},
 
-	getParticles: function(amount) {
-		var newParticles = [];
-		var max = amount;
-		var vxMin = this.options.velocityXmin;
-		var vxMax = this.options.velocityXmax;
-		var vyMin = this.options.velocityYmin;
+	getParticles: function() {
+		var vxMin = this.options.velocityX - (this.options.velocityX * 2);
+		var vxMax = this.options.velocityX;
 		var vyMax = this.options.velocityYmax;
 
-		while (max > 0) {
-			newParticles.push({
-				x: START_POSITION.x,
-				y: START_POSITION.y,
-				vX: getRandomArbitrary(vxMin, vxMax),
-				vY: getRandomIntInclusive(vyMin, vyMax)
-			});
-			max--;
-		}
-
-		return newParticles;
+		return {
+			x: START_POSITION.x,
+			y: START_POSITION.y,
+			vX: getRandomArbitrary(vxMin, vxMax),
+			vY: getRandomArbitrary(7, vyMax)
+		};
 	},
 
 	render: function() {
@@ -105,10 +89,14 @@ FireworksCanvas.prototype = {
 
 			return false;
 		});
+	},
 
-		window.requestAnimationFrame(function() {
-			self.addParticles();
-		});
+	frame: function() {
+		if (this.running) {
+			window.requestAnimationFrame(this.frame);
+		}
+		this.addParticles();
+		this.render();
 	},
 
 	drawParticle: function(x, y, direction) {
@@ -118,7 +106,8 @@ FireworksCanvas.prototype = {
 	},
 
 	clearPrevious: function() {
-		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.context.fillStyle = 'rgba(255,255,255,0.05)';
+		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 	},
 
 	setRandomColor: function(x, y, direction) {
