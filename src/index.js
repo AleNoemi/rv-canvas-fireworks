@@ -65,7 +65,6 @@ FireworksCanvas.prototype = {
 
 	render: function() {
 		var self = this;
-		var direction;
 
 		// Clear previous state
 		this.clearPrevious();
@@ -74,8 +73,6 @@ FireworksCanvas.prototype = {
 		this.particles = this.particles.filter(function(p) {
 			// Aplly gravity
 			p.vY = p.vY - self.options.gravity;
-			// Define direction
-			direction = (p.vY < 0) ? 'down' : 'up';
 
 			// Update positions
 			p.y = p.y - p.vY;
@@ -83,7 +80,8 @@ FireworksCanvas.prototype = {
 
 			// Check if position is still on viewport
 			if (p.y < START_POSITION.y + DIMENTIONS.height) {
-				self.drawParticle(p.x, p.y, direction);
+				self.setRandomColor(p);
+				self.drawParticle(p);
 				return true;
 			}
 
@@ -99,23 +97,22 @@ FireworksCanvas.prototype = {
 		this.render();
 	},
 
-	drawParticle: function(x, y, direction) {
-		this.setRandomColor(x, y, direction);
-
-		this.context.fillRect(x, y, DIMENTIONS.width, DIMENTIONS.height);
+	drawParticle: function(p) {
+		this.context.fillRect(p.x, p.y, DIMENTIONS.width, DIMENTIONS.height);
 	},
 
 	clearPrevious: function() {
-		this.context.fillStyle = 'rgba(255,255,255,0.05)';
+		this.context.fillStyle = 'rgba(255, 255, 255, 0.2)';
 		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 	},
 
-	setRandomColor: function(x, y, direction) {
+	setRandomColor: function(p) {
 		var alpha = 1;
 
-		// +0.15 to slow down the fadeOut effect
-		if (direction === 'down') {
-			alpha = (alpha - (y / START_POSITION.y)) + 0.15;
+		// +0.15 to slow down the fadeOut effect.
+		// p.vY is lower than 0 when particle is going down.
+		if (p.vY < 0) {
+			alpha = (alpha - (p.y / START_POSITION.y)) + 0.15;
 		}
 
 		this.context.fillStyle = [
