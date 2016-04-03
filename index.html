@@ -34,15 +34,13 @@
 				<input type="range" min="1" max="5" step="0.5" value="2.5" name="velocityX" class="canvas-parameter-range js-input-range" />
 			</li>
 			<li class="js-canvas-parameter">
-				<span class="canvas-parameter-name">(Y) Velocity max:</span>
+				<span class="canvas-parameter-name">Vertical velocity max:</span>
 				<input type="text" class="canvas-parameter-value js-input-text" value="9">
 				<input type="range" min="8" max="16" step="1" value="9" name="velocityYmax" class="canvas-parameter-range js-input-range" />
 			</li>
-			<li>
-				<button class="js-start-btn" style="display: none;">Start</button>
-				<button class="js-stop-btn">Stop</button>
-			</li>
 		</ul>
+		<button class="js-start-btn btn green-btn" style="display: none;">Play</button>
+		<button class="js-stop-btn btn red-btn">Pause</button>
 	</div>
 	<canvas id="fireworks-canvas" width="800" height="600"></canvas>
 </div>
@@ -76,6 +74,17 @@
 			range.addEventListener('change', function(event) {
 				var value = parseFloat(event.currentTarget.value);
 				text.value = value;
+				updateFireworks(range.name, value);
+			});
+
+			text.addEventListener('keyup', function(event) {
+				event.which = event.which || event.keyCode;
+				if (event.which !== 13) {
+					return;
+				}
+
+				var value = parseFloat(event.currentTarget.value);
+				range.value = value;
 				updateFireworks(range.name, value);
 			});
 		});
