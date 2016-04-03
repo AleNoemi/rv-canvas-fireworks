@@ -84,17 +84,6 @@ gulp.task('js-uglify', function() {
         .pipe(gulp.dest(target.js_dest));                // where to put the files
 });
 
-// minify & concatinate all other js
-/*
-gulp.task('js-concat', function() {
-    gulp.src(target.js_concat_src)                      // get the files
-        .pipe(uglify())                                 // uglify the files
-        .pipe(concat('scripts.min.js'))                 // concatinate to one file
-        .pipe(gulp.dest(target.js_dest))                // where to put the files
-        .pipe(notify({message: 'JS processed!'}));      // notify when done
-});
-*/
-
 
 /*******************************************************************************
 5. BROWSER SYNC

@@ -5,7 +5,7 @@ body{
 }
 
 .canvas-wrapper{
-	width: 1000px;
+	width: 1020px;
 	margin: 20px auto;
 	background: #fff;
 }
@@ -17,8 +17,17 @@ body{
 }
 
 .canvas-parameter-value{
+	font-size: 12px;
 	width: 40px;
 	float: right;
+	padding: 4px 5px;
+	border: 1px solid #e1e1e1;
+	border-radius: 2px;
+	outline: none;
+
+	&:focus{
+		border-color: #55ADED;
+	}
 }
 
 .canvas-parameter-name{
@@ -29,5 +38,72 @@ body{
 
 .canvas-parameter-range{
 	display: block;
-	margin: 8px 0 10px 0;
+	margin: 13px 0 10px 0;
+}
+
+.canvas-parameters{
+	margin-bottom: 40px;
+}
+
+.canvas-parameters > li {
+	margin-bottom: 25px;
+
+	&:last-child{
+		margin-bottom: 0;
+	}
+}
+
+.btn {
+	color: #fff;
+	cursor: pointer;
+	padding: 13px 0;
+	width: 100%;
+	display: block;
+	border: none;
+	border-radius: 2px;
+	outline: none;
+
+	&.green-btn{
+		background: #4aaaa5;
+		&:hover{
+			background: #2a8a85;
+		}
+	}
+
+	&.red-btn {
+		background: #f47e7e;
+		&:hover{
+			background: #e05d5d;
+		}
+	}
+}
+
+input[type=range]{
+    -webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 300px;
+    height: 5px;
+    background: #ddd;
+    border: none;
+    border-radius: 3px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background: #55ADED;
+    margin-top: -5px;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: #ccc;
 }
